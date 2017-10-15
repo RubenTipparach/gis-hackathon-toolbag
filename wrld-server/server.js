@@ -64,9 +64,16 @@ const adapter = new FileSync('db.json');
 const db = low(adapter);
 
 
-app.get('/api/:eventType', (req, res) => {
-	console.log('post');
-	const post = db.get(req.params.eventType).value();
+app.get('/api/FireEvents', (req, res) => {
+	//console.log('post');
+	const post = db.get('FireEvents').value();
+
+	res.send(post);
+});
+
+app.get('/api/CrashDataFargo', (req, res) => {
+
+	const post = db.get('CrashDataFargo').value();
 
 	res.send(post);
 });
