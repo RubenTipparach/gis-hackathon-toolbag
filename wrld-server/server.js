@@ -6,7 +6,7 @@ port    = parseInt(process.env.PORT, 10);
 // ACTIVATE CORS!
 var cors = require('cors');
 var bodyParser = require('body-parser');
-
+var fs = require("fs");
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var colors = require('colors');
@@ -17,42 +17,42 @@ var logger = require('./logger.js');
 var sqlServer = require('./sqllib/sqlserver.js');
 var config = require('./config.json');
 
-
 logger.level = 'error';
 
-console.log(config.sqlConn);
 
 //var sqlConn = new sqlServer(config.sqlConn);
 
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }))
-app.use(cors());
+// app.use(bodyParser.json())
+// app.use(bodyParser.urlencoded({ extended: true }))
+// app.use(cors());
 
+
+//console.log(db);
 
 server.listen(config.port_number, () => {
     logger.info(`Map started on port ${config.port_number.toString().green.bold}`);
 });
 
 
-app.post('/comms', (req, res) =>
-{	
-	//console.log(req.raw);
-	//console.log(req.body);
+// app.post('/comms', (req, res) =>
+// {	
+// 	//console.log(req.raw);
+// 	//console.log(req.body);
 
-	for( var i in req)
-	{
-	//	console.log(i);
-	}
+// 	for( var i in req)
+// 	{
+// 	//	console.log(i);
+// 	}
 
-	console.log("--------------");
-	console.log(req.body);
-	console.log(req.query);
+// 	console.log("--------------");
+// 	console.log(req.body);
+// 	console.log(req.query);
 
-    //res.header("Access-Control-Allow-Origin", "*");
-    //res.header("Access-Control-Allow-Headers", "X-Requested-With");
+//     //res.header("Access-Control-Allow-Origin", "*");
+//     //res.header("Access-Control-Allow-Headers", "X-Requested-With");
 
-	res.send("blah");
-});
+// 	res.send("blah");
+// });
 
 
 /////////////////////
@@ -63,7 +63,9 @@ const FileSync = require('lowdb/adapters/FileSync');
 const adapter = new FileSync('db.json');
 const db = low(adapter);
 
+
 app.get('/api/:eventType', (req, res) => {
+	console.log('post');
 	const post = db.get(req.params.eventType).value();
 
 	res.send(post);
