@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Simple Polylines</title>
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+	<!--
+	<link rel="stylesheet" type="text/css" href="semantic/dist/semantic.min.css">
+	<script src="semantic/dist/semantic.min.js"></script>-->
+	<script
+	  src="https://code.jquery.com/jquery-3.1.1.min.js"
+	  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+	  crossorigin="anonymous"></script>
+	
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAH4CLVpfQVqqLMPwyb24vg2Pihvacc4LI"></script>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+
+      // This example creates a 2-pixel-wide red polyline showing the path of
+      // the first trans-Pacific flight between Oakland, CA, and Brisbane,
+      // Australia which was made by Charles Kingsford Smith.
+		$( document ).ready(() => {
+			initMap();
+		});
+
+      function initMap() {
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 3,
+          center: {lat: 46.865206, lng: -96.829005},
+          mapTypeId: 'terrain'
+        });
+		
+		$.get( "http://localhost:4001/addressBook", ( data ) => {
+			console.log(data)
+			for(const d of data){
+				// add path
+				var flightPlanCoordinates = [
+				  {lat: 46.865206, lng: -96.829005},
+				  d.LatLong,
+				];
+
+				var flightPath = new google.maps.Polyline({
+				  path: flightPlanCoordinates,
+				  geodesic: true,
+				  strokeColor: '#FF0000',
+				  strokeOpacity: 1.0,
+				  strokeWeight: 2
+				});
+
+				flightPath.setMap(map);
+				
+
+				const infowindow = new google.maps.InfoWindow({
+				  content: ''
+				});
+
+				const marker = new google.maps.Marker({
+				  position: d.LatLong,
+				  map: map
+				});
+				
+
+				marker.addListener('click', () => {
+					console.log(d.id)
+					// do query
+					$.get( "http://localhost:4001/getDataById/" + d.id, (data) => {
+							console.log(data);
+							infowindow.setContent( `<pre>${JSON.stringify(data)}</pre>`);
+							infowindow.open(map, marker);
+						});
+					});
+				}
+			});
+		}
+      
+    </script>
+
+  </body>
+</html>
